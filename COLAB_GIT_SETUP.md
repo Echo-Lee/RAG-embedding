@@ -27,7 +27,7 @@ git commit -m "Initial commit: RAG pipeline implementation"
 
 ```bash
 # Replace with your GitHub repo URL
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git remote add origin https://github.com/Echo-Lee/RAG-embedding.git
 git branch -M main
 git push -u origin main
 ```
@@ -60,7 +60,7 @@ models/               # Trained models
 
 ```python
 # In Colab notebook first cell
-!git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+!git clone https://github.com/Echo-Lee/RAG-embedding.git
 %cd YOUR_REPO
 ```
 
@@ -195,7 +195,7 @@ Create this as `notebooks/colab_setup.ipynb`:
 
 ```python
 # Cell 1: Clone repo
-!git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+!git clone https://github.com/Echo-Lee/RAG-embedding.git
 %cd YOUR_REPO
 
 # Cell 2: Mount Drive and link data

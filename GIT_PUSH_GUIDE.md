@@ -40,7 +40,7 @@ git status
 git commit -m "Initial commit: RAG pipeline with dual dataset support"
 
 # Add your GitHub repo
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git remote add origin https://github.com/Echo-Lee/RAG-embedding.git
 
 # Push
 git branch -M main
