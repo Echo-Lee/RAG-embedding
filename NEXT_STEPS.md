@@ -96,9 +96,9 @@ print("✅ Setup complete! Now open notebooks/launcher.ipynb")
 2. 点击 **+ Add new secret**
 3. 添加两个secrets:
    - Name: `AZURE_API_KEY`
-     Value: `58f022d5560f4b3c99834c9ff5b8655d`
+     Value: `xxx`
    - Name: `AZURE_ENDPOINT`
-     Value: `https://ls-s-eus-paulohagan-openai.openai.azure.com/`
+     Value: `xxx`
 
 ---
 
