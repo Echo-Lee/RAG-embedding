@@ -73,7 +73,7 @@ DATASET = "hospital"   # "hospital" 或 "corruption"
 
 # 加载配置
 from config.config import load_config
-config = load_config(f'experiments/{DATASET}_base.yaml')
+config = load_config(f'{DATASET}_base')  # auto-adds experiments/ and .yaml
 
 # 构建或加载索引
 if MODE == "full":
