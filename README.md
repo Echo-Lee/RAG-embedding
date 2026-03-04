@@ -1,217 +1,199 @@
-# RAG Email Assistant
+# RAG Email System
 
-A complete Retrieval-Augmented Generation (RAG) system for email search and question answering, with support for custom embedding fine-tuning.
+Retrieval-Augmented Generation (RAG) system for querying email datasets with semantic search and LLM generation.
 
-## Features
+---
 
-- **Dense Retrieval**: FAISS-based vector search with Qwen3 embeddings
-- **Reranking**: Cross-Encoder reranking for improved accuracy
-- **RAG Generation**: Azure OpenAI GPT-4 for answer generation
-- **Fine-tuning**: Support for custom embedding model training
-- **Interactive UI**: Gradio web interface
-- **Multi-dataset**: Supports hospital and corruption email datasets
+## 🚀 Quick Start
 
-## Quick Start
+### **One file. Run in Colab. Done.**
 
-### 1. Prepare Data
+1. Open **[all_in_one.ipynb](all_in_one.ipynb)** in Google Colab
+2. Run all cells from top to bottom
+3. Wait ~15 mins for first index build
+4. Get public Gradio URL to query emails
 
-Data files are already in place (both preprocessed):
+**That's it!**
 
-```
-data/
-└── processed/
-    ├── hospital/threads_with_summary.json           # Hospital emails (preprocessed)
-    └── corruption/emails_group_by_thread.json       # Corruption emails (preprocessed)
-```
+---
 
-### 2. Configure (Optional)
+## 📋 What It Does
 
-Edit experiment config files in `experiments/` if needed:
-- `hospital_base.yaml`
-- `corruption_base.yaml`
+- **Retrieval**: FAISS search (top 50) → Cross-Encoder rerank (top 10)
+- **Generation**: Azure OpenAI GPT-4 answers from retrieved emails
+- **UI**: Gradio web interface with shareable URL
+- **Persistence**: Auto-save to Google Drive, reload in 1 second
 
-Azure OpenAI credentials are already configured.
+---
 
-### 3. Launch in Colab or Local Runtime
-
-Open `notebooks/launcher.ipynb` and:
-- Dependencies will be auto-installed in the first cell
-- Select your mode and dataset:
-  - **Quick Start**: Load existing index (fast)
-  - **Full Pipeline**: Build index from scratch (first time)
-  - **Fine-tune**: Train custom embedding model
-- Run all cells
-
-### 4. Local Development (Optional)
-
-If developing locally, install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-├── data/                   # Datasets
-│   ├── raw/               # Original data files
-│   ├── processed/         # Processed data
-│   └── fine_tune/         # Fine-tuning data
-├── src/                   # Source code
-│   ├── config/            # Configuration management
-│   ├── data/              # Data loading
-│   ├── models/            # Model training
-│   ├── retrieval/         # Retrieval & reranking
-│   ├── generation/        # Answer generation
-│   └── app/               # Gradio UI
-├── notebooks/             # Jupyter notebooks
-│   └── launcher.ipynb     # Main entry point
-├── experiments/           # Experiment configs (YAML)
-├── models/                # Trained models
-└── outputs/               # Outputs (indexes, results)
+RAG-embedding/
+├── all_in_one.ipynb          # ⭐ USE THIS - everything in one file
+├── src/
+│   ├── config/               # Config system
+│   ├── data/                 # Data loaders
+│   ├── retrieval/            # FAISS + reranking
+│   ├── generation/           # Azure OpenAI
+│   └── app/                  # Gradio UI
+└── experiments/              # YAML configs
+    ├── hospital_base_template.yaml
+    └── corruption_base_template.yaml
+
+Google Drive:
+├── Capstone-Data/            # Your data (upload once)
+│   ├── hospital/threads_with_summary.json
+│   └── corruption/emails_group_by_thread.json
+└── Capstone-Outputs/         # Auto-saved indexes
+    └── indexes/
 ```
 
-## Pipeline Overview
+---
+
+## 🛠️ One-Time Setup
+
+### 1. Upload Data to Google Drive
 
 ```
-User Query
-    ↓
-[Embedding Model]
-    ↓
-[FAISS Dense Retrieval] → top-50 candidates
-    ↓
-[Cross-Encoder Reranker] → top-10 documents
-    ↓
-[Azure OpenAI GPT-4] → Generated Answer
-    ↓
-Display to User
+Google Drive/Capstone-Data/
+├── hospital/threads_with_summary.json      (28MB, ~9,300 emails)
+└── corruption/emails_group_by_thread.json  (3.3MB, ~800 threads)
 ```
 
-## Datasets
+### 2. Add Colab Secrets
 
-### Hospital Dataset
-- **Location**: `data/processed/hospital/threads_with_summary.json`
-- **Format**: Thread-based with full email content
-- **Structure**: Thread metadata + individual emails
-- **Status**: Preprocessed, ready for indexing
-- **Size**: ~9,300 documents
+In Colab: Click 🔑 **Secrets** (left sidebar) → Add:
+- `AZURE_API_KEY`
+- `AZURE_ENDPOINT`
 
-### Corruption Dataset
-- **Location**: `data/processed/corruption/emails_group_by_thread.json`
-- **Format**: Thread-grouped with full email content
-- **Structure**: Thread ID → list of emails
-- **Status**: Preprocessed, ready for indexing
-- **Size**: ~800 threads with multiple emails each
+---
 
-## Configuration
+## 📖 Usage
 
-Key parameters in YAML config files:
+### Run all_in_one.ipynb
+
+**First time (MODE="full")**:
+- Builds index (~15 mins)
+- Saves to Drive
+- Launches demo
+
+**Next time (MODE="quick")**:
+- Loads index (1 sec)
+- Launches demo immediately
+
+### Change Settings
+
+In configuration cell:
+```python
+MODE = "full"          # "full" or "quick"
+DATASET = "hospital"   # "hospital" or "corruption"
+```
+
+---
+
+## 🔄 Local Development
+
+### Edit Code Locally, Run on Colab GPU
+
+1. **Edit locally**:
+   ```bash
+   # Edit src/retrieval/retriever.py
+   git add . && git commit -m "Update" && git push
+   ```
+
+2. **Update Colab**:
+   - Re-run first cell (auto `git pull`)
+   - Or manually: `!cd /content/RAG-embedding && git pull`
+
+3. **Restart kernel**, re-run notebook
+
+---
+
+## ⚙️ Configuration
+
+Example `experiments/hospital_base.yaml`:
 
 ```yaml
-# Retrieval
-top_k_retrieval: 50        # First stage candidates
-top_k_rerank: 10           # Final results after reranking
+dataset:
+  name: hospital
+  data_path: data/processed/hospital/threads_with_summary.json
 
-# Models
 embedding_model: Qwen/Qwen3-Embedding-0.6B
-reranker_model: cross-encoder/ms-marco-MiniLM-L-6-v2
+top_k_retrieval: 50
+top_k_rerank: 10
+use_reranker: true
 
-# Generation
-azure_endpoint: your-endpoint
-azure_api_key: your-key
+azure_api_key: YOUR_KEY
+azure_endpoint: YOUR_ENDPOINT
+azure_deployment: gpt-4
 ```
 
-## Usage Examples
+---
 
-### Python API
+## 📊 Performance
 
-```python
-from config.config import load_config
-from retrieval.retriever import HybridRetriever
-from generation.rag_generator import RAGGenerator
+| Task | Time | Notes |
+|------|------|-------|
+| **Build index (hospital)** | ~15 min | T4 GPU, 9,300 docs |
+| **Build index (corruption)** | ~2 min | T4 GPU, 800 docs |
+| **Load index from Drive** | 1 sec | Subsequent runs |
+| **Query (end-to-end)** | 3-5 sec | Retrieve + rerank + generate |
 
-# Load config
-config = load_config('hospital_base')
+---
 
-# Initialize components
-retriever = HybridRetriever(config)
-generator = RAGGenerator(config)
+## 🎯 Tips
 
-# Search and generate answer
-docs = retriever.retrieve("What is the main topic?", top_k=5)
-answer = generator.generate("What is the main topic?", docs)
+- **Save time**: Use `MODE="quick"` after first run
+- **Switch datasets**: Change `DATASET="corruption"` in config cell
+- **Indexes persist**: Survive Colab disconnects (saved to Drive)
 
-print(answer)
-```
+---
 
-### Gradio UI
+## 🐛 Troubleshooting
 
-Launch the interactive demo:
+### ModuleNotFoundError: No module named 'data.loader'
+- **Fix**: Re-run all cells from top (setup must run first)
 
-```python
-from app.gradio_app import create_demo
-
-demo = create_demo(retriever, reranker, generator, config)
-demo.launch(share=True)
-```
-
-## Colab Usage
-
-When using Google Colab:
-
-1. Upload `src/` folder to Colab or connect via local runtime
-2. Open `notebooks/launcher.ipynb`
-3. Run cells to set up environment
-4. Choose mode and run pipeline
-
-## Advanced Features
-
-### Custom Embeddings
-
-Train fine-tuned embedding models (coming soon):
-
-```python
-MODE = "finetune"
-DATASET = "hospital"
-# Run fine-tuning cells
-```
-
-### Reranker Comparison
-
-Test with/without reranker:
-
-```python
-# With reranker (better accuracy)
-docs = retriever.retrieve(query, use_rerank=True)
-
-# Without reranker (faster)
-docs = retriever.retrieve(query, use_rerank=False)
-```
-
-## Performance
-
-Expected Hit@K on test sets:
-
-| Model | Hit@1 | Hit@5 | Hit@10 |
-|-------|-------|-------|--------|
-| Base  | ~65%  | ~85%  | ~90%   |
-| Fine-tuned | ~75% | ~92% | ~95% |
-
-## Troubleshooting
-
-### Index not found
-Run **Full Pipeline** mode first to build the index.
+### FileNotFoundError: Config file not found
+- **Fix**: Use `load_config('hospital_base')` NOT `'experiments/hospital_base.yaml'`
 
 ### CUDA out of memory
-Reduce `batch_size` in config file.
+- **Fix**: Reduce `batch_size` in config
 
-### API errors
-Check Azure OpenAI credentials in config.
+### Colab disconnected
+- **No problem!** Re-run with `MODE="quick"` to load saved index
 
-## License
+---
 
-MIT License
+## 📝 Tech Stack
 
-## Contact
+- FAISS (vector search)
+- Qwen3-Embedding-0.6B (embeddings)
+- Cross-Encoder (reranking)
+- Azure OpenAI GPT-4.1 (generation)
+- Gradio (UI)
+- Google Colab T4 GPU
+- Google Drive (storage)
 
-For questions or issues, please open an issue on GitHub.
+---
+
+## 📚 Key Modules
+
+**src/config/config.py**: Config management
+**src/data/loader.py**: Multi-format data loading
+**src/retrieval/indexer.py**: FAISS index building
+**src/retrieval/retriever.py**: Hybrid retrieval pipeline
+**src/retrieval/reranker.py**: Cross-Encoder reranking
+**src/generation/rag_generator.py**: Azure OpenAI integration
+**src/app/gradio_app.py**: Web UI
+
+---
+
+## 📄 License
+
+Academic project - Cornell University
+
+---
+
+**Built for efficient email search and analysis** 🎓
