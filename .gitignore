@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Models and data (large files)
+models/
+outputs/
+data/
+*.index
+*.pkl
+*.pth
+*.bin
+*.safetensors
+
+# Old directories (to be deleted)
+OldTrain/
+NewTrain/
+ORIE-5981-RAG/
+
+# Old notebooks (replaced by launcher)
+pipeline.ipynb
+RAG.ipynb
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Secrets (IMPORTANT: Don't commit API keys!)
+*api_key*
+*secret*
+experiments/*_secret.yaml
+experiments/*_private.yaml
