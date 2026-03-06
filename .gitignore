@@ -30,7 +30,7 @@ wheels/
 # Models and data (large files)
 models/
 outputs/
-data/
+/data/
 *.index
 *.pkl
 *.pth
